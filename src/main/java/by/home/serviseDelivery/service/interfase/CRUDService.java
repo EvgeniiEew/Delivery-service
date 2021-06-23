@@ -1,5 +1,6 @@
 package by.home.serviseDelivery.service.interfase;
 
+
 import java.util.List;
 
 public interface CRUDService<T> {
@@ -11,5 +12,4 @@ public interface CRUDService<T> {
 
     void deleteEntity(T entity);
 
-//    void deleteById(Integer ID);
 }

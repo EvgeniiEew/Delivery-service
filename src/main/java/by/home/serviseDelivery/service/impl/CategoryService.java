@@ -1,11 +1,19 @@
 package by.home.serviseDelivery.service.impl;
 
 import by.home.serviseDelivery.domain.Category;
+import by.home.serviseDelivery.domain.Shop;
 import by.home.serviseDelivery.service.ICategoryService;
+import by.home.serviseDelivery.service.interfase.FileService;
 
 import java.util.List;
 
 public class CategoryService implements ICategoryService {
+    private final FileService fileService;
+
+    CategoryService(FileService fileService) {
+        this.fileService = fileService;
+    }
+
     @Override
     public List<Category> getAll() {
         return null;
@@ -25,4 +33,5 @@ public class CategoryService implements ICategoryService {
     public void deleteEntity(Category entity) {
 
     }
+
 }

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Order {
+    private  Integer id;
     private int priceOrder;
     private String nameShop;
     private Date dateOrder;
