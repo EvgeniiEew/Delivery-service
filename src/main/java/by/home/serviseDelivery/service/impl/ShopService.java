@@ -1,5 +1,6 @@
 package by.home.serviseDelivery.service.impl;
 
+import by.home.serviseDelivery.domain.Category;
 import by.home.serviseDelivery.domain.Order;
 import by.home.serviseDelivery.domain.Product;
 import by.home.serviseDelivery.domain.Shop;
@@ -61,8 +62,8 @@ public class ShopService implements IShopService {
         Shop shop = shops.get(entity.getId());
         shop.setAddress(entity.getAddress());
         shop.setName(entity.getName());
-        shop.setOrderList(entity.getOrderList());
-        shop.setProductList(entity.getProductList());
+//        shop.setOrderList(entity.getOrderList());
+//        shop.setProductList(entity.getProductList());
         return save(shops.put(entity.getId(), shop));
     }
 
@@ -74,7 +75,7 @@ public class ShopService implements IShopService {
         fileService.writeFile(values, SHOP);
     }
 
-//    public Shop createShop(String name, String address) {
+    //    public Shop createShop(String name, String address) {
 //        Product product = new Product(4, 123, 112, "wadw", null);
 //        ArrayList pr = new ArrayList();
 //        pr.add(product);
@@ -88,21 +89,32 @@ public class ShopService implements IShopService {
 //        fileService.writeFile(shopList, SHOP);
 //        return shop;
 //    }
+    private Shop getShopById(Integer id) {
+        Map<Integer, Shop> shops = getAll();
+        return shops.get(id);
+    }
 
     @Override
-    public void addProduct(Integer shopId, Product product) {
-        Map<Integer, Shop> shops = getAll();
-        Shop shop = shops.get(shopId);
+    public void addProduct(Integer shopId, Product newProduct) {
+        Shop shop = getShopById(shopId);
         List<Product> productList = shop.getProductList();
-        productList.add(productList.size() + 1, product);
+        Map<Integer, Product> map = productList.stream().collect(Collectors.toMap(Product::getId, product1 -> product1));
+        if (map.get(newProduct.getId()) != null) {
+            Product product = map.get(newProduct.getId());
+            product.setCount(product.getCount() + newProduct.getCount());
+            map.put(newProduct.getId(), product);
+            shop.setProductList(new ArrayList<>(map.values()));
+            save(shop);
+            return;
+        }
+        productList.add(newProduct);
         shop.setProductList(productList);
         save(shop);
     }
 
     @Override
     public void delProduct(Integer idProduct, Integer shopId) {
-        Map<Integer, Shop> shops = getAll();
-        Shop shop = shops.get(shopId);
+        Shop shop = getShopById(shopId);
         List<Product> productList = shop.getProductList();
         shop.setProductList(productList.stream()
                 .filter(p -> !p.getId().equals(idProduct)).collect(Collectors.toList()));
@@ -111,11 +123,59 @@ public class ShopService implements IShopService {
 
     @Override
     public void addOrder(Integer shopId, Order order) {
-        Map<Integer, Shop> shops = getAll();
-        Shop shop = shops.get(shopId);
+        Shop shop = getShopById(shopId);
         List<Order> orderList = shop.getOrderList();
-        orderList.set(orderList.size() + 1, order);
-        shop.setOrderList(orderList);
+        if (orderList != null) {
+            orderList.add(order);
+            shop.setOrderList(orderList);
+            save(shop);
+            return;
+        }
+        List<Order> orderL = new ArrayList<>();
+        orderL.add(order);
+        shop.setOrderList(orderL);
         save(shop);
+    }
+
+    @Override
+    public void delOrder(Integer shopId, Integer orderId) {
+        Shop shop = getShopById(shopId);
+        //del by id
+        shop.setOrderList(null);
+
+        Map<Integer, Shop> mapShop = getAll();
+        mapShop.put(shopId, shop);
+        List<Shop> shopList = new ArrayList<>(mapShop.values());
+        fileService.writeFile(shopList, SHOP);
+    }
+
+    @Override
+    public List<Order> getAllOrderShop(Integer shopId) {
+        Shop shop = getShopById(shopId);
+        return shop.getOrderList();
+    }
+
+    @Override
+    public List<Product> getAllProductShop(Integer shopId) {
+        Shop shop = getShopById(shopId);
+        return shop.getProductList();
+    }
+
+    @Override
+    public List<Product> getAllProductShopFindByPriceAndCategory(Integer shopId, Integer price, Category category) {
+//        Shop shop = getShopById(shopId);
+//        List<Product> productList = shop.getProductList();
+//        if (price != null & category != null)
+//            productList.stream().filter(p -> p.getCount().equals(price)).collect(Collectors.toList()).stream()
+//                    .filter(product -> product.getCategorySet().) ()
+        return null;
+    }
+
+    @Override
+    public List<Product> getAllProductSortedByPrice(Integer shopId) {
+//        Shop shop = getShopById(shopId);
+//        List<Product> productList = shop.getProductList();
+//        productList.stream().sorted(product -> product.getPrice()).collect(Collectors.toList());
+        return null;
     }
 }
