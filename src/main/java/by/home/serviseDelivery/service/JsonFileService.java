@@ -29,14 +29,13 @@ public class JsonFileService<T> implements FileService<T> {
     }
 
     @Override
-    public Collection<T> readFile(String fileName) {
+    public Collection<T> readFile(String fileName,  T type) {
         Gson gson = new Gson();
-        File file = new File("resources/" + fileName + ".json");
+        File file = new File("resources/"+ fileName + ".json");
         String absolutePath = file.getAbsolutePath();
         try {
             String line = Files.lines(Paths.get(absolutePath)).reduce("", String::concat);
-            Type userListType = new TypeToken<Collection<T>>() {
-            }.getType();
+            Type userListType = TypeToken.getParameterized(Collection.class, type.getClass()).getType();
             return gson.fromJson(line, userListType);
 
         } catch (IOException e) {

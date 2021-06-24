@@ -7,5 +7,5 @@ import java.util.List;
 public interface FileService<T> {
     void writeFile(List<T> obj, String fileName);
 
-    Collection<T> readFile(String fileName);
+    Collection<T> readFile(String fileName ,T type);
 }

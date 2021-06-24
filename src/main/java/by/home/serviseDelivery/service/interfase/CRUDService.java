@@ -1,10 +1,13 @@
 package by.home.serviseDelivery.service.interfase;
 
 
-import java.util.List;
+import by.home.serviseDelivery.domain.Shop;
 
-public interface CRUDService<T> {
-    List<T> getAll();
+import java.util.List;
+import java.util.Map;
+
+public interface CRUDService<ID, T> {
+    Map<ID, T> getAll();
 
     T save(T entity);
 

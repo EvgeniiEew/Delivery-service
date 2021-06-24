@@ -4,7 +4,7 @@ import by.home.serviseDelivery.domain.Client;
 import by.home.serviseDelivery.service.IClientService;
 import by.home.serviseDelivery.service.interfase.FileService;
 
-import java.util.List;
+import java.util.Map;
 
 public class ClientService implements IClientService {
     private final FileService fileService;
@@ -14,7 +14,7 @@ public class ClientService implements IClientService {
     }
 
     @Override
-    public List<Client> getAll() {
+    public Map<Integer, Client> getAll() {
         return null;
     }
 

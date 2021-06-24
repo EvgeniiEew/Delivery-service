@@ -1,7 +1,6 @@
 package by.home.serviseDelivery.domain;
 
 import java.util.List;
-
 public class Shop {
     private Integer id;
     private String name;

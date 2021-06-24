@@ -4,7 +4,7 @@ import by.home.serviseDelivery.domain.Order;
 import by.home.serviseDelivery.service.IOrderService;
 import by.home.serviseDelivery.service.interfase.FileService;
 
-import java.util.List;
+import java.util.Map;
 
 public class OrderService implements IOrderService {
     private final FileService fileService;
@@ -14,7 +14,7 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public List<Order> getAll() {
+    public Map<Integer, Order> getAll() {
         return null;
     }
 

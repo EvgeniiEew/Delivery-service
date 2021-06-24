@@ -4,7 +4,7 @@ import by.home.serviseDelivery.domain.Product;
 import by.home.serviseDelivery.service.IProductService;
 import by.home.serviseDelivery.service.interfase.FileService;
 
-import java.util.List;
+import java.util.Map;
 
 public class ProductService implements IProductService {
     private final FileService fileService;
@@ -14,7 +14,7 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public List<Product> getAll() {
+    public Map<Integer, Product> getAll() {
         return null;
     }
 
