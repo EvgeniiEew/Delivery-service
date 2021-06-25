@@ -7,14 +7,16 @@ public class Order {
     private Integer id;
     private int priceOrder;
     private String nameShop;
+    private String address;
     private Date dateOrder ;
     private StatusOrder statusOrder;
     private List<Product> productList;
 
-    public Order(Integer id, int priceOrder, String nameShop, Date dateOrder, StatusOrder statusOrder, List<Product> productList) {
+    public Order(Integer id, int priceOrder, String nameShop, String address, Date dateOrder, StatusOrder statusOrder, List<Product> productList) {
         this.id = id;
         this.priceOrder = priceOrder;
         this.nameShop = nameShop;
+        this.address = address;
         this.dateOrder = dateOrder;
         this.statusOrder = statusOrder;
         this.productList = productList;
@@ -69,5 +71,13 @@ public class Order {
 
     public void setProductList(List<Product> productList) {
         this.productList = productList;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

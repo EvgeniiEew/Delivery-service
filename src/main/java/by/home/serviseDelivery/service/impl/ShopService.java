@@ -8,6 +8,7 @@ import by.home.serviseDelivery.service.IShopService;
 import by.home.serviseDelivery.service.interfase.FileService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,7 +26,10 @@ public class ShopService implements IShopService {
     @Override
     public Map<Integer, Shop> getAll() {
         List<Shop> shopList = (List<Shop>) fileService.readFile(SHOP, new Shop());
-        return shopList.stream().collect(Collectors.toMap(Shop::getId, shop -> shop));
+        if (shopList != null) {
+            return shopList.stream().collect(Collectors.toMap(Shop::getId, shop -> shop));
+        }
+        return new HashMap<Integer, Shop>();
     }
 
     private List<Shop> getListShop() {
@@ -122,19 +126,20 @@ public class ShopService implements IShopService {
     }
 
     @Override
-    public void addOrder(Integer shopId, Order order) {
+    public Order addOrder(Integer shopId, Order order) {
         Shop shop = getShopById(shopId);
         List<Order> orderList = shop.getOrderList();
         if (orderList != null) {
             orderList.add(order);
             shop.setOrderList(orderList);
             save(shop);
-            return;
+            return order;
         }
         List<Order> orderL = new ArrayList<>();
         orderL.add(order);
         shop.setOrderList(orderL);
         save(shop);
+        return order;
     }
 
     @Override
@@ -156,7 +161,7 @@ public class ShopService implements IShopService {
     }
 
     @Override
-    public List<Product> getAllProductShop(Integer shopId) {
+    public List<Product> getAllShopProducts(Integer shopId) {
         Shop shop = getShopById(shopId);
         return shop.getProductList();
     }

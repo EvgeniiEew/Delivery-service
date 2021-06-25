@@ -14,11 +14,11 @@ public interface IShopService extends CRUDService<Integer, Shop> {
 
     void delProduct(Integer productId, Integer shopId);
 
-    void addOrder(Integer shopId, Order order);
+    Order addOrder(Integer shopId, Order order);
 
     void delOrder(Integer shopId, Integer orderId);
 
-    List<Product> getAllProductShop(Integer shopId);
+    List<Product> getAllShopProducts(Integer shopId);
 
     List<Order> getAllOrderShop(Integer shopId);
 
