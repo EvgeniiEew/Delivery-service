@@ -7,6 +7,7 @@ import by.home.serviseDelivery.domain.Shop;
 import by.home.serviseDelivery.service.interfase.CRUDService;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IShopService extends CRUDService<Integer, Shop> {
 
@@ -22,11 +23,13 @@ public interface IShopService extends CRUDService<Integer, Shop> {
 
     List<Order> getAllOrderShop(Integer shopId);
 
-    //поиск товара по цене и по категории  или
-    List<Product> getAllProductShopFindByPriceAndCategory(Integer shopId, Integer price, Category category);
+    List<Product> getAllProductShopFindByPriceAndName(Integer shopId, Integer price, String productName);
 
-    //сортировка товара по Ценее
     List<Product> getAllProductSortedByPrice(Integer shopId);
-    //сортировка
 
+    List<Product> getAllProductSortedByCategory(Integer shopId, Category category);
+
+    Map<Integer, String> getShopInfoIdAndName();
+
+    Shop getShopById(Integer id);
 }

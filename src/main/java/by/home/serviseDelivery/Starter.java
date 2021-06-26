@@ -19,20 +19,23 @@ public class Starter {
         JsonFileService fileService = new JsonFileService();
         CenterControlService centerControlService = new CenterControlService(fileService);
         centerControlService.showMainMenu();
-//        JsonFileService fileService = new JsonFileService();
+////        JsonFileService fileService = new JsonFileService();
 //        IShopService shopService = new ShopService(fileService);
 //        IClientService clientService = new ClientService(fileService);
+//        List<Product> productList = shopService.getAllProductShopFindByPriceAndName(1, 3, "хлеб");
+//        System.out.println(  productList.get(0).getCount());
 //        Client client = new Client(1,"name","fname","street",null);
 //        clientService.update(client);
 //        clientService.save(client);
 //        clientService.deleteEntity(client);
+//
 //        Product product = new Product(7, 22, 152, "Овощь", null);
 //        Product product2 = new Product(9, 22, 152, "Фрукт", null);
 //        List<Product> productList = new ArrayList<>();
 //        productList.add(product);
 //        productList.add(product2);
-//        Shop shop = new Shop(3,"КуwМагаз","Шорса",null,productList);
-//        shopService.update(shop); //upd shop
+//        Shop shop = new Shop(6, "КуwМагаз", "Шорса", null, productList);
+////        shopService.update(shop); //upd shop
 //        shopService.save(shop); //create shop
 //        shopService.delProduct(7,5); //del product
 //        shopService.addProduct(3,product2); //add product

@@ -7,10 +7,7 @@ import by.home.serviseDelivery.domain.Shop;
 import by.home.serviseDelivery.service.IShopService;
 import by.home.serviseDelivery.service.interfase.FileService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -66,8 +63,6 @@ public class ShopService implements IShopService {
         Shop shop = shops.get(entity.getId());
         shop.setAddress(entity.getAddress());
         shop.setName(entity.getName());
-//        shop.setOrderList(entity.getOrderList());
-//        shop.setProductList(entity.getProductList());
         return save(shops.put(entity.getId(), shop));
     }
 
@@ -79,21 +74,7 @@ public class ShopService implements IShopService {
         fileService.writeFile(values, SHOP);
     }
 
-    //    public Shop createShop(String name, String address) {
-//        Product product = new Product(4, 123, 112, "wadw", null);
-//        ArrayList pr = new ArrayList();
-//        pr.add(product);
-//        Shop shop = new Shop();
-//        shop.setId(1);
-//        shop.setName(name);
-//        shop.setAddress(address);
-//        shop.setProductList(pr);
-//        List<Shop> shopList = new ArrayList<>();
-//        shopList.add(shop);
-//        fileService.writeFile(shopList, SHOP);
-//        return shop;
-//    }
-    private Shop getShopById(Integer id) {
+    public Shop getShopById(Integer id) {
         Map<Integer, Shop> shops = getAll();
         return shops.get(id);
     }
@@ -102,17 +83,20 @@ public class ShopService implements IShopService {
     public void addProduct(Integer shopId, Product newProduct) {
         Shop shop = getShopById(shopId);
         List<Product> productList = shop.getProductList();
-        Map<Integer, Product> map = productList.stream().collect(Collectors.toMap(Product::getId, product1 -> product1));
-        if (map.get(newProduct.getId()) != null) {
-            Product product = map.get(newProduct.getId());
-            product.setCount(product.getCount() + newProduct.getCount());
-            map.put(newProduct.getId(), product);
-            shop.setProductList(new ArrayList<>(map.values()));
-            save(shop);
-            return;
+        if (productList != null) {
+            Map<Integer, Product> map = productList.stream().collect(Collectors.toMap(Product::getId, product1 -> product1));
+            if (map.get(newProduct.getId()) != null) {
+                Product product = map.get(newProduct.getId());
+                product.setCount(product.getCount() + newProduct.getCount());
+                map.put(newProduct.getId(), product);
+                shop.setProductList(new ArrayList<>(map.values()));
+                save(shop);
+                return;
+            }
         }
-        productList.add(newProduct);
-        shop.setProductList(productList);
+        List<Product> newProductList = new ArrayList<>();
+        newProductList.add(newProduct);
+        shop.setProductList(newProductList);
         save(shop);
     }
 
@@ -145,9 +129,8 @@ public class ShopService implements IShopService {
     @Override
     public void delOrder(Integer shopId, Integer orderId) {
         Shop shop = getShopById(shopId);
-        //del by id
-        shop.setOrderList(null);
-
+        List<Order> orderList = shop.getOrderList();
+        shop.setOrderList(orderList.stream().filter(order -> !order.getId().equals(orderId)).collect(Collectors.toList()));
         Map<Integer, Shop> mapShop = getAll();
         mapShop.put(shopId, shop);
         List<Shop> shopList = new ArrayList<>(mapShop.values());
@@ -167,20 +150,43 @@ public class ShopService implements IShopService {
     }
 
     @Override
-    public List<Product> getAllProductShopFindByPriceAndCategory(Integer shopId, Integer price, Category category) {
-//        Shop shop = getShopById(shopId);
-//        List<Product> productList = shop.getProductList();
-//        if (price != null & category != null)
-//            productList.stream().filter(p -> p.getCount().equals(price)).collect(Collectors.toList()).stream()
-//                    .filter(product -> product.getCategorySet().) ()
-        return null;
+    public List<Product> getAllProductShopFindByPriceAndName(Integer shopId, Integer price, String productName) {
+        Shop shop = getShopById(shopId);
+        List<Product> productList = shop.getProductList();
+        if (price != null && productName != null && productList != null) {
+            return productList.stream().filter(p -> p.getPrice() == (price) && p.getName().equals(productName)).
+                    collect(Collectors.toList());
+        }
+        return productList;
     }
 
     @Override
     public List<Product> getAllProductSortedByPrice(Integer shopId) {
-//        Shop shop = getShopById(shopId);
-//        List<Product> productList = shop.getProductList();
-//        productList.stream().sorted(product -> product.getPrice()).collect(Collectors.toList());
-        return null;
+        Shop shop = getShopById(shopId);
+        List<Product> productList = shop.getProductList();
+        return productList.stream().sorted(Comparator.comparingInt(Product::getPrice)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Product> getAllProductSortedByCategory(Integer shopId, Category category) {
+        Shop shop = getShopById(shopId);
+        List<Product> productList = shop.getProductList();
+        List<Product> sortedList = new ArrayList<>();
+        for (Product product : productList) {
+            product.setCategorySet(product.getCategorySet().stream().filter(category1 ->
+                    category1.equals(category)).collect(Collectors.toSet()));
+            sortedList.add(product);
+        }
+        return sortedList;
+    }
+
+    @Override
+    public Map<Integer, String> getShopInfoIdAndName() {
+        if (getListShop() != null) {
+            return getListShop().stream().collect(Collectors.toMap(Shop::getId, Shop::getName));
+        }
+        Map<Integer, String> integerStringMap = new HashMap<>();
+        integerStringMap.put(666, "Нет зарегистрированных магазинов");
+        return integerStringMap;
     }
 }
