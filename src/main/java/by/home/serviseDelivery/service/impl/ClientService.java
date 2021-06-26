@@ -100,7 +100,11 @@ public class ClientService implements IClientService {
         Map<Integer, Client> clientMap = getAll();
         Client client = clientMap.get(clientId);
         List<Order> orderList = client.getOrderList();
-        return orderList.stream().collect(Collectors.toMap(Order::getId, order -> order));
+        Map<Integer, Order> orderMap = new HashMap<>();
+        if (orderList != null) {
+            orderMap = orderList.stream().collect(Collectors.toMap(Order::getId, order -> order));
+        }
+        return orderMap;
     }
 
     @Override

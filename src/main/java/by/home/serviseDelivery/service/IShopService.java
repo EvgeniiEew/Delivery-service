@@ -19,7 +19,9 @@ public interface IShopService extends CRUDService<Integer, Shop> {
 
     void delOrder(Integer shopId, Integer orderId);
 
-    List<Product> getAllShopProducts(Integer shopId);
+    void editProduct(Integer shopId, Product product);
+
+    Map<Integer, Product> getAllShopProducts(Integer shopId);
 
     List<Order> getAllOrderShop(Integer shopId);
 
@@ -27,7 +29,7 @@ public interface IShopService extends CRUDService<Integer, Shop> {
 
     List<Product> getAllProductSortedByPrice(Integer shopId);
 
-    List<Product> getAllProductSortedByCategory(Integer shopId, Category category);
+    List<Product> getAllProductSortedByCategory(Integer shopId, String category);
 
     Map<Integer, String> getShopInfoIdAndName();
 

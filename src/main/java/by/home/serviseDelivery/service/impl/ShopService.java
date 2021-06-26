@@ -93,6 +93,10 @@ public class ShopService implements IShopService {
                 save(shop);
                 return;
             }
+            productList.add(newProduct);
+            shop.setProductList(productList);
+            save(shop);
+            return;
         }
         List<Product> newProductList = new ArrayList<>();
         newProductList.add(newProduct);
@@ -138,15 +142,35 @@ public class ShopService implements IShopService {
     }
 
     @Override
+    public void editProduct(Integer shopId, Product product) {
+        Shop shop = getShopById(shopId);
+        List<Product> productList = shop.getProductList();
+        if (productList != null) {
+            Map<Integer, Product> map = productList.stream().collect(Collectors.toMap(Product::getId, product1 -> product1));
+            if (map.get(product.getId()) != null) {
+                map.put(product.getId(), product);
+                List<Product> newProducts = new ArrayList<>(map.values());
+                shop.setProductList(newProducts);
+                save(shop);
+            }
+        }
+    }
+
+    @Override
     public List<Order> getAllOrderShop(Integer shopId) {
         Shop shop = getShopById(shopId);
         return shop.getOrderList();
     }
 
     @Override
-    public List<Product> getAllShopProducts(Integer shopId) {
+    public Map<Integer, Product> getAllShopProducts(Integer shopId) {
         Shop shop = getShopById(shopId);
-        return shop.getProductList();
+        Map<Integer, Product> mapProduct = new HashMap<>();
+        if (shop != null && shop.getProductList() != null) {
+            List<Product> productList = shop.getProductList();
+            mapProduct = productList.stream().collect(Collectors.toMap(Product::getId, product1 -> product1));
+        }
+        return mapProduct;
     }
 
     @Override
@@ -168,15 +192,26 @@ public class ShopService implements IShopService {
     }
 
     @Override
-    public List<Product> getAllProductSortedByCategory(Integer shopId, Category category) {
+    public List<Product> getAllProductSortedByCategory(Integer shopId, String category) {
         Shop shop = getShopById(shopId);
         List<Product> productList = shop.getProductList();
         List<Product> sortedList = new ArrayList<>();
         for (Product product : productList) {
-            product.setCategorySet(product.getCategorySet().stream().filter(category1 ->
-                    category1.equals(category)).collect(Collectors.toSet()));
-            sortedList.add(product);
+            for (Category category1 : product.getCategorySet()) {
+                if (category1.getName().equals(category)) {
+                    sortedList.add(product);
+                }
+            }
         }
+
+
+//            product.setCategorySet(product.getCategorySet().stream().filter(category1 ->
+//                    category1.getName().contains(category)).collect(Collectors.toSet()));
+//            product.setCategorySet(product.getCategorySet().stream().filter(category1 ->
+//                    category1.getName().equals(category)).collect(Collectors.toSet()));
+//            if (product.getCategorySet() != null) {
+//            sortedList.add(product);
+//                System.out.println("W");
         return sortedList;
     }
 
