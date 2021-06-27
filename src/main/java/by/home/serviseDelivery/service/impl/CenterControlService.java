@@ -25,10 +25,10 @@ public class CenterControlService {
     private StringBuilder getViewMeu() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Main menu:\n");
-        stringBuilder.append("\n1.The shops");
+        stringBuilder.append("\n1.Shops");
         stringBuilder.append("\n2.Clients");
         stringBuilder.append("\n3.User orders");
-        stringBuilder.append("\n0.exit");
+        stringBuilder.append("\n0.exit\n");
         return stringBuilder;
     }
 
@@ -51,7 +51,6 @@ public class CenterControlService {
                         System.exit(0);
                         break;
                     default:
-                        this.getViewMeu();
                         break;
                 }
             } catch (InputMismatchException e) {
@@ -64,45 +63,44 @@ public class CenterControlService {
         Scanner in = new Scanner(System.in);
         System.out.println("Select a user to view orders:");
         Map<Integer, Client> clients = clientService.getAll();
-        if (clients != null && clients.size() != 0) {
-            for (Map.Entry<Integer, Client> clientMap : clients.entrySet()) {
-                System.out.println(" User number "
-                        + clientMap.getKey()
-                        + ", name: "
-                        + clientMap.getValue().getfName());
-            }
-            int num = in.nextInt();
-            if (num == 0) {
-                getViewMeu();
-            }
-            if (clients.get(num) == null) {
-                showProductUser();
-            }
-            Map<Integer, Order> orderMap = clientService.getOrderList(num);
-            if (orderMap != null) {
-                for (Map.Entry<Integer, Order> map : orderMap.entrySet()) {
-                    System.out.println(" Order N: " + map.getKey() + " , price: " + map.getValue().getPriceOrder() + " ,name of shop: " + map.getValue().getNameShop() + " , Delivery address: " + map.getValue().getAddress() + ",  Products: " + "");
-                    if (map.getValue().getProductList() == null) {
-                        System.out.println("no products");
-                    } else {
-                        for (Product products : map.getValue().getProductList()) {
-                            System.out.println("Number: " + products.getId() + " price :" + products.getCount() + " Name: " + products.getName());
-                            getViewMeu();
-                        }
+        if (clients == null || clients.size() == 0) {
+            return;
+        }
+        for (Map.Entry<Integer, Client> clientMap : clients.entrySet()) {
+            System.out.println(
+                    clientMap.getKey() + ". User name: \n" + clientMap.getValue().getfName()
+            );
+        }
+        int num = in.nextInt();
+        if (num == 0) {
+            return;
+        }
+        if (clients.get(num) == null) {
+            return;
+        }
+        Map<Integer, Order> orderMap = clientService.getOrderList(num);
+        if (orderMap != null && orderMap.size() != 0) {
+            for (Map.Entry<Integer, Order> map : orderMap.entrySet()) {
+                System.out.println(" Order N: " + map.getKey() + " , price: " + map.getValue().getPriceOrder() + " ,name of shop: " + map.getValue().getNameShop() + " , Delivery address: " + map.getValue().getAddress() + ",  Products: " + "");
+                if (map.getValue().getProductList() == null) {
+                    System.out.println("no products");
+                } else {
+                    for (Product products : map.getValue().getProductList()) {
+                        System.out.println(products.getId() + ". Name: " + products.getName() + ", Price :" + products.getCount() + "\n");
+                        getViewMeu();
                     }
                 }
-            } else {
-                System.out.println(" could not find orders");
             }
+        } else {
+            System.out.println(" could not find orders");
         }
-        getViewMeu();
     }
 
     private StringBuilder getViewClients() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("\n1.Default user selection. View users / edit and delete");
         stringBuilder.append("\n2.Registration of clients");
-        stringBuilder.append("\n0.To the main menu");
+        stringBuilder.append("\n0.To the main menu \n");
         return stringBuilder;
     }
 
@@ -124,7 +122,7 @@ public class CenterControlService {
             }
             editDelUser(clientNumber);
         }
-        System.out.println("could not find user");
+        System.out.println("No user found");
         showClients();
     }
 
@@ -150,16 +148,21 @@ public class CenterControlService {
     }
 
     private void editUser(int clientNumber) {
-        Scanner in = new Scanner(System.in);
-        Client newClient = new Client();
-        newClient.setId(clientNumber);
-        System.out.println("Enter a name:");
-        newClient.setfName(in.nextLine());
-        System.out.println("Enter the last name:");
-        newClient.setlName(in.nextLine());
-        System.out.println("Enter the address of residence :");
-        newClient.setAddress(in.nextLine());
+        Client newClient = readClientData(clientNumber);
         clientService.update(newClient);
+    }
+
+    private Client readClientData(int clientNumber) {
+        Scanner in = new Scanner(System.in);
+        Client client = new Client();
+        client.setId(clientNumber);
+        System.out.println("Enter a name:");
+        client.setfName(in.nextLine());
+        System.out.println("Enter the last name:");
+        client.setlName(in.nextLine());
+        System.out.println("Enter the address of residence :");
+        client.setAddress(in.nextLine());
+        return client;
     }
 
     private void delUser(int clientNumber) {
@@ -168,16 +171,8 @@ public class CenterControlService {
     }
 
     private void registerUser() {
-        Scanner in = new Scanner(System.in);
-        Client newClient = new Client();
-        newClient.setId(sequenceId);
+        Client newClient = readClientData(sequenceId);
         sequenceId++;
-        System.out.println("Enter a name:");
-        newClient.setfName(in.nextLine());
-        System.out.println("Enter the last name:");
-        newClient.setlName(in.nextLine());
-        System.out.println("Enter the address of residence :");
-        newClient.setAddress(in.nextLine());
         clientService.save(newClient);
         showClients();
     }
@@ -197,7 +192,6 @@ public class CenterControlService {
                     showMainMenu();
                     break;
                 default:
-                    this.getViewClients();
                     break;
             }
         }
@@ -205,16 +199,16 @@ public class CenterControlService {
 
     private StringBuilder getShopView() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("\n1.Choosing a store for: ordering, viewing, changing and deleting products");
+        stringBuilder.append("\n1.Choose a store for: ordering, viewing, changing and deleting products");
         stringBuilder.append("\n2.Shop registration");
-        stringBuilder.append("\n0.To the main menu");
+        stringBuilder.append("\n0.To the main menu \n");
         return stringBuilder;
     }
 
     private void showMenuShop() {
         Scanner in = new Scanner(System.in);
-        for (; ; ) {
-            System.out.println(this.getShopView().toString());
+        while (true) {
+            System.out.println(getShopView().toString());
             switch (in.nextInt()) {
                 case (1):
                     showListShops();
@@ -226,7 +220,6 @@ public class CenterControlService {
                     showMainMenu();
                     break;
                 default:
-                    this.getShopView();
                     break;
             }
         }
@@ -237,7 +230,7 @@ public class CenterControlService {
         Shop newShop = new Shop();
         newShop.setId(sequenceId);
         sequenceId++;
-        System.out.println("Enter store name:");
+        System.out.println("\nEnter store name:");
         newShop.setName(in.nextLine());
         System.out.println("Enter store address:");
         newShop.setAddress(in.nextLine());
@@ -247,30 +240,32 @@ public class CenterControlService {
 
     private void showListShops() {
         Scanner in = new Scanner(System.in);
-        System.out.println(getShopsFromSql().toString());
-        numberShop = in.nextInt();
-        if (numberShop == 0) {
-            showMenuShop();
+        while (true) {
+            System.out.println(getShopsFromSql().toString());
+            numberShop = in.nextInt();
+            if (numberShop == 0) {
+                showMenuShop();
+                return;
+            }
+            if (shopService.getShopInfoIdAndName().get(numberShop) != null && numberShop != 404) {
+                showShops(numberShop);
+            }
         }
-        if (shopService.getShopInfoIdAndName().get(numberShop) != null && numberShop != 666) {
-            showShops(numberShop);
-        }
-        showListShops();
     }
 
     private StringBuilder getShopsFromSql() {
         StringBuilder stringBuilder = new StringBuilder();
         Map<Integer, String> infoShops = shopService.getShopInfoIdAndName();
-        infoShops.forEach((key, value) -> stringBuilder.append("Number :").append(key).append(" . Title: ").append(value).append("\n"));
+        infoShops.forEach((key, value) -> stringBuilder.append(key).append(". Shop Title: ").append(value).append("\n"));
         stringBuilder.append("Number of stores ").append(shopService.getAll().size());
-        stringBuilder.append("\n Select shop №:");
-        stringBuilder.append("\n0. Return to the shop menu ");
+        stringBuilder.append("\n Select shop by number:");
+        stringBuilder.append("\n0. Return to the shop menu \n");
         return stringBuilder;
     }
 
     private void showShops(int numberShop) {
         Scanner in = new Scanner(System.in);
-        for (; ; ) {
+        while (true) {
             System.out.println(infoShop(numberShop).toString());
             switch (in.nextInt()) {
                 case (1):
@@ -289,7 +284,6 @@ public class CenterControlService {
                     addProductShop(numberShop);
                     break;
                 default:
-                    this.infoShop(numberShop);
                     break;
             }
         }
@@ -329,7 +323,6 @@ public class CenterControlService {
         product.setCount(in.nextInt());
         System.out.println("indicate the price: (numerical value)");
         product.setPrice(in.nextInt());
-
         product.setCategorySet(addCategory());
         shopService.addProduct(numberShop, product);
         showShops(numberShop);
@@ -342,17 +335,17 @@ public class CenterControlService {
         stringBuilder.append("\n2.Add product");
         stringBuilder.append("\n3.Change of registration data");
         stringBuilder.append("\n4.Deleting a shop");
-        stringBuilder.append("\n0.Back to the list of stores");
+        stringBuilder.append("\n0.Back to the list of stores\n");
         return stringBuilder;
     }
 
     private void productShop(int numberShop) {
         Scanner in = new Scanner(System.in);
-        String stringBuilder = "1: search for products by one or more attributes " +
-                " 2: show all products sorted by price " +
-                " 3: viewing products in specified categories " +
-                " 0: Back to shop menu ";
-        System.out.println(stringBuilder);
+        String message = "1: search for products by one or more attributes \n" +
+                " 2: show all products sorted by price \n" +
+                " 3: viewing products in specified categories \n" +
+                " 0: Back to shop menu \n";
+        System.out.println(message);
         typeSort = in.nextInt();
         switch (typeSort) {
             case (1):
@@ -368,7 +361,6 @@ public class CenterControlService {
                 showShops(numberShop);
                 break;
             default:
-                productShop(numberShop);
                 break;
         }
     }
@@ -387,7 +379,7 @@ public class CenterControlService {
                 }
             }
             stringBuilder.append("\n select a product ");
-            stringBuilder.append("\n 0.Come back ");
+            stringBuilder.append("\n 0.Come back\n");
             System.out.println(stringBuilder.toString());
             numberProduct = in.nextInt();
             if (numberProduct == 0) {
@@ -399,34 +391,21 @@ public class CenterControlService {
             }
             productBuyEditDel(numberShop, numberProduct);
         }
-        System.out.println("could not find product");
+        System.out.println("could not find product\n");
         showShops(numberShop);
     }
 
     private void searchForProductsByOneOrMoreAttributes(int numberShop) {
         StringBuilder stringBuilder = new StringBuilder();
         Scanner in = new Scanner(System.in);
-        System.out.println("Enter the name of the product:");
+        System.out.println("\nEnter the name of the product:");
         String nameProduct = in.nextLine();
         System.out.println("Indicate the price of the item:");
         int priceProduct = in.nextInt();
         List<Product> productList = shopService.getAllProductShopFindByPriceAndName(numberShop, priceProduct, nameProduct);
         if (productList != null && productList.size() != 0) {
-            for (Product product : productList) {
-                System.out.println(" Number product: " + product.getId() + ", Product name: " + product.getName() + ", Price: " + product.getPrice() + ", Number of products: " + product.getCount() + ", Product categories: ");
-                for (Category category : product.getCategorySet()) {
-                    System.out.println("" + category.getName());
-                }
-            }
-            stringBuilder.append("\n select a product ");
-            stringBuilder.append("\n 0.Come back ");
-            System.out.println(stringBuilder.toString());
-            numberProduct = in.nextInt();
-            if (numberProduct == 0) {
-                productShop(numberShop);
-            }
-            Map<Integer, Product> productMap = productList.stream().collect(Collectors.toMap(Product::getId, product -> product));
-            if (productMap.get(numberProduct) == null) {
+            Map<Integer, Product> productsMap = getProductsMap(numberShop, stringBuilder, in, productList);
+            if (productsMap.get(numberProduct) == null) {
                 searchForProductsByOneOrMoreAttributes(numberShop);
             }
             productBuyEditDel(numberShop, numberProduct);
@@ -440,27 +419,31 @@ public class CenterControlService {
         Scanner in = new Scanner(System.in);
         List<Product> productList = shopService.getAllProductSortedByPrice(numberShop);
         if (productList != null && productList.size() != 0) {
-            for (Product products : productList) {
-                System.out.println(" Number product: " + products.getId() + ", Product name: " + products.getName() + ", Price: " + products.getPrice() + ", Number of products: " + products.getCount() + ", Product categories: ");
-                for (Category category : products.getCategorySet()) {
-                    System.out.println("" + category.getName());
-                }
-            }
-            stringBuilder.append("\n select a product ");
-            stringBuilder.append("\n 0.Come back ");
-            System.out.println(stringBuilder.toString());
-            numberProduct = in.nextInt();
-            if (numberProduct == 0) {
-                productShop(numberShop);
-            }
-            Map<Integer, Product> productMap = productList.stream().collect(Collectors.toMap(Product::getId, product -> product));
-            if (productMap.get(numberProduct) == null) {
-                searchForProductsSortedByPrice(numberShop);
+            Map<Integer, Product> productsMap = getProductsMap(numberShop, stringBuilder, in, productList);
+            if (productsMap.get(numberProduct) == null) {
                 System.out.println("could not find product");
+                return;
             }
             productBuyEditDel(numberShop, numberProduct);
         }
         showShops(numberShop);
+    }
+
+    private Map<Integer, Product> getProductsMap(int numberShop, StringBuilder stringBuilder, Scanner in, List<Product> productList) {
+        for (Product products : productList) {
+            System.out.println(" Number product: " + products.getId() + ", Product name: " + products.getName() + ", Price: " + products.getPrice() + ", Number of products: " + products.getCount() + ", Product categories: ");
+            for (Category category : products.getCategorySet()) {
+                System.out.println("" + category.getName());
+            }
+        }
+        stringBuilder.append("\n select a product ");
+        stringBuilder.append("\n 0.Come back \n");
+        System.out.println(stringBuilder.toString());
+        numberProduct = in.nextInt();
+        if (numberProduct == 0) {
+            productShop(numberShop);
+        }
+        return productList.stream().collect(Collectors.toMap(Product::getId, product -> product));
     }
 
     private StringBuilder productBuyEditDelInfo() {
@@ -474,7 +457,7 @@ public class CenterControlService {
 
     private void productBuyEditDel(int numberShop, int numberProduct) {
         Scanner in = new Scanner(System.in);
-        for (; ; ) {
+        while (true) {
             System.out.println(productBuyEditDelInfo().toString());
             switch (in.nextInt()) {
                 case (1):
@@ -490,7 +473,6 @@ public class CenterControlService {
                     infoShop(numberShop);
                     break;
                 default:
-                    this.productBuyEditDel(numberShop, numberProduct);
                     break;
             }
         }
@@ -527,7 +509,7 @@ public class CenterControlService {
             checkProductAvailability(product, shop);
             product.setCount(product.getCount() - 1);
             shopService.editProduct(numberShop, product);
-            System.out.println("order is accepted");
+            System.out.println("order is accepted\n");
         } else {
             System.out.println("no product");
         }
@@ -569,7 +551,7 @@ public class CenterControlService {
 
     private void delShop(int numberShop) {
         shopService.deleteEntity(shopService.getShopById(numberShop));
-        System.out.println("Shop : №" + numberShop + "deleted");
+        System.out.println("Shop : №" + numberShop + "deleted\n");
         showListShops();
     }
 }

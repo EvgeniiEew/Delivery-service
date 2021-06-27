@@ -1,9 +1,6 @@
 package by.home.serviseDelivery.service.interfase;
 
 
-import by.home.serviseDelivery.domain.Shop;
-
-import java.util.List;
 import java.util.Map;
 
 public interface CRUDService<ID, T> {

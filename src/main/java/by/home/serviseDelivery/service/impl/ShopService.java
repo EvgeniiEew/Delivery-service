@@ -25,7 +25,7 @@ public class ShopService implements IShopService {
         if (shopList != null) {
             return shopList.stream().collect(Collectors.toMap(Shop::getId, shop -> shop));
         }
-        return new HashMap<Integer, Shop>();
+        return new HashMap<>();
     }
 
     private List<Shop> getListShop() {
@@ -216,7 +216,7 @@ public class ShopService implements IShopService {
             return getListShop().stream().collect(Collectors.toMap(Shop::getId, Shop::getName));
         }
         Map<Integer, String> integerStringMap = new HashMap<>();
-        integerStringMap.put(666, "Нет зарегистрированных магазинов");
+        integerStringMap.put(404, "No shops found");
         return integerStringMap;
     }
 }

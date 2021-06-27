@@ -25,7 +25,7 @@ public class ClientService implements IClientService {
         if (shopList != null) {
             return shopList.stream().collect(Collectors.toMap(Client::getId, client -> client));
         }
-        return new HashMap<Integer, Client>();
+        return new HashMap<>();
     }
 
     private List<Client> getListClient() {
@@ -98,11 +98,13 @@ public class ClientService implements IClientService {
     @Override
     public Map<Integer, Order> getOrderList(Integer clientId) {
         Map<Integer, Client> clientMap = getAll();
-        Client client = clientMap.get(clientId);
-        List<Order> orderList = client.getOrderList();
         Map<Integer, Order> orderMap = new HashMap<>();
-        if (orderList != null) {
-            orderMap = orderList.stream().collect(Collectors.toMap(Order::getId, order -> order));
+        Client client = clientMap.get(clientId);
+        if (client != null) {
+            List<Order> orderList = client.getOrderList();
+            if (orderList != null) {
+                orderMap = orderList.stream().collect(Collectors.toMap(Order::getId, order -> order));
+            }
         }
         return orderMap;
     }
