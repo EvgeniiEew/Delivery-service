@@ -36,22 +36,26 @@ public class CenterControlService {
         Scanner in = new Scanner(System.in);
         while (true) {
             System.out.println(this.getViewMeu().toString());
-            switch (in.nextInt()) {
-                case (1):
-                    showMenuShop();
-                    break;
-                case (2):
-                    showClients();
-                    break;
-                case (3):
-                    showProductUser();
-                    break;
-                case (0):
-                    System.exit(0);
-                    break;
-                default:
-                    this.getViewMeu();
-                    break;
+            try {
+                switch (in.nextInt()) {
+                    case (1):
+                        showMenuShop();
+                        break;
+                    case (2):
+                        showClients();
+                        break;
+                    case (3):
+                        showProductUser();
+                        break;
+                    case (0):
+                        System.exit(0);
+                        break;
+                    default:
+                        this.getViewMeu();
+                        break;
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Error!");
             }
         }
     }
@@ -77,11 +81,7 @@ public class CenterControlService {
             Map<Integer, Order> orderMap = clientService.getOrderList(num);
             if (orderMap != null) {
                 for (Map.Entry<Integer, Order> map : orderMap.entrySet()) {
-                    System.out.println(" Заказ N: "
-                            + map.getKey()
-                            + " , цена: " + map.getValue().getPriceOrder() + " , название магазина: "
-                            + map.getValue().getNameShop() + " , Адрес доставки: " +
-                            map.getValue().getAddress() + ",  Продукты: " + "");
+                    System.out.println(" Заказ N: " + map.getKey() + " , цена: " + map.getValue().getPriceOrder() + " , название магазина: " + map.getValue().getNameShop() + " , Адрес доставки: " + map.getValue().getAddress() + ",  Продукты: " + "");
                     if (map.getValue().getProductList() == null) {
                         System.out.println("нет товаров");
                     } else {
@@ -111,15 +111,7 @@ public class CenterControlService {
         Map<Integer, Client> clients = clientService.getAll();
         if (clients != null && clients.size() != 0) {
             for (Map.Entry<Integer, Client> clientMap : clients.entrySet()) {
-                System.out.println(" Номер юзера "
-                        + clientMap.getKey()
-                        + ", имя: "
-                        + clientMap.getValue().getfName() +
-                        ", Фамилия: "
-                        + clientMap.getValue().getlName()
-                        + ", Адресс: "
-                        + clientMap.getValue().getAddress()
-                        + " \n");
+                System.out.println(" Номер юзера " + clientMap.getKey() + ", имя: " + clientMap.getValue().getfName() + ", Фамилия: " + clientMap.getValue().getlName() + ", Адресс: " + clientMap.getValue().getAddress() + " \n");
             }
             System.out.println("Выберите юзера по умолчанию, для выполнения заказов из магазина, или для изменения. ");
             System.out.println("0.Вернуться");
@@ -136,7 +128,7 @@ public class CenterControlService {
         showClients();
     }
 
-    public void editDelUser(int clientNumber) {
+    private void editDelUser(int clientNumber) {
         Scanner in = new Scanner(System.in);
         System.out.println("1. изменить" + " 2. Удалить" + " 3. Выбрать и перейти к выбору магазина");
         System.out.println("0.Вернуться назад");
@@ -269,7 +261,7 @@ public class CenterControlService {
     private StringBuilder getShopsFromSql() {
         StringBuilder stringBuilder = new StringBuilder();
         Map<Integer, String> infoShops = shopService.getShopInfoIdAndName();
-        infoShops.forEach((key, value) -> stringBuilder.append("Номер -" + key + " . Название: " + value + "\n"));
+        infoShops.forEach((key, value) -> stringBuilder.append("Номер -").append(key).append(" . Название: ").append(value).append("\n"));
         stringBuilder.append("Колличество магазинов ").append(shopService.getAll().size());
         stringBuilder.append("\n Выберите : N  магазина");
         stringBuilder.append("\n0. Вернуться в меню магазинов ");
@@ -504,15 +496,11 @@ public class CenterControlService {
         }
     }
 
-    private void byProduct(int numberShop, int numberProduct) {
+    public void checkProductAvailability(Product product, Shop shop) {
         Scanner in = new Scanner(System.in);
-        Shop shop = shopService.getShopById(numberShop);
-        List<Product> productList = shop.getProductList();
-        Map<Integer, Product> productMap = productList.stream().collect(Collectors.toMap(Product::getId, product1 -> product1));
-        Product product = productMap.get(numberProduct);
+        Order order = new Order();
         List<Product> productList1 = new ArrayList<>();
         productList1.add(product);
-        Order order = new Order();
         order.setId(sequenceId);
         sequenceId++;
         order.setPriceOrder(product.getCount());
@@ -523,12 +511,26 @@ public class CenterControlService {
         order.setStatusOrder(StatusOrder.PENDING);
         order.setProductList(productList1);
         shopService.addOrder(numberShop, order);
-        if(clientNumber == 0){
+        clientService.addOrder(order, clientNumber);
+    }
+
+    private void byProduct(int numberShop, int numberProduct) {
+        Shop shop = shopService.getShopById(numberShop);
+        List<Product> productList = shop.getProductList();
+        Map<Integer, Product> productMap = productList.stream().collect(Collectors.toMap(Product::getId, product1 -> product1));
+        Product product = productMap.get(numberProduct);
+        if (clientNumber == 0) {
             System.out.println("Номер юзера по умолчанию не выбран, выберите юзера и вернитесь к магазинам:");
             listUser();
         }
-        clientService.addOrder(order, clientNumber);
-        System.out.println("заказ принят");
+        if (product.getCount() > 0) {
+            checkProductAvailability(product, shop);
+            product.setCount(product.getCount() - 1);
+            shopService.editProduct(numberShop, product);
+            System.out.println("заказ принят");
+        } else {
+            System.out.println("нет товара");
+        }
         productShop(numberShop);
     }
 

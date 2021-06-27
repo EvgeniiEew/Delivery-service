@@ -1,6 +1,5 @@
 package by.home.serviseDelivery.service;
 
-import by.home.serviseDelivery.domain.Category;
 import by.home.serviseDelivery.domain.Order;
 import by.home.serviseDelivery.domain.Product;
 import by.home.serviseDelivery.domain.Shop;

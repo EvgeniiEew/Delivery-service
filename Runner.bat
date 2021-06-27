@@ -1,4 +1,5 @@
 chcp 65001
+
 cd E:\Projects\deliveryService
 dir /s/b/o *.java >sourse
 javac -d target -cp .\lib\gson-2.8.6.jar @sourse
