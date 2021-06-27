@@ -64,7 +64,7 @@ public class CenterControlService {
             for (Map.Entry<Integer, Client> clientMap : clients.entrySet()) {
                 System.out.println(" Номер юзера "
                         + clientMap.getKey()
-                        + ", Имя: "
+                        + ", имя: "
                         + clientMap.getValue().getfName());
             }
             int num = in.nextInt();
@@ -77,10 +77,10 @@ public class CenterControlService {
             Map<Integer, Order> orderMap = clientService.getOrderList(num);
             if (orderMap != null) {
                 for (Map.Entry<Integer, Order> map : orderMap.entrySet()) {
-                    System.out.println(" Номер заказа "
+                    System.out.println(" Заказ N: "
                             + map.getKey()
-                            + " , цена: " + map.getValue().getPriceOrder() + " , Название магазина: "
-                            + map.getValue().getNameShop() + " , Адресс : " +
+                            + " , цена: " + map.getValue().getPriceOrder() + " , название магазина: "
+                            + map.getValue().getNameShop() + " , Адрес доставки: " +
                             map.getValue().getAddress() + ",  Продукты: " + "");
                     if (map.getValue().getProductList() == null) {
                         System.out.println("нет товаров");
@@ -98,7 +98,6 @@ public class CenterControlService {
         getViewMeu();
     }
 
-
     private StringBuilder getViewClients() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("\n1.Выбор пользователя по умолчанию. Просмотр пользователей/ редактирование и удаление");
@@ -114,7 +113,7 @@ public class CenterControlService {
             for (Map.Entry<Integer, Client> clientMap : clients.entrySet()) {
                 System.out.println(" Номер юзера "
                         + clientMap.getKey()
-                        + ", Имя: "
+                        + ", имя: "
                         + clientMap.getValue().getfName() +
                         ", Фамилия: "
                         + clientMap.getValue().getlName()
@@ -122,7 +121,7 @@ public class CenterControlService {
                         + clientMap.getValue().getAddress()
                         + " \n");
             }
-            System.out.println("Выберите юзера по умолчанию, для выполнения заказов из магазина. Или для изменения. ");
+            System.out.println("Выберите юзера по умолчанию, для выполнения заказов из магазина, или для изменения. ");
             System.out.println("0.Вернуться");
             clientNumber = in.nextInt();
             if (clientNumber == 0) {
@@ -139,7 +138,7 @@ public class CenterControlService {
 
     public void editDelUser(int clientNumber) {
         Scanner in = new Scanner(System.in);
-        System.out.println("1.Изменить " + "2. Удалить" + " 3.Выбрать и  перейти к выбору магазина");
+        System.out.println("1. изменить" + " 2. Удалить" + " 3. Выбрать и перейти к выбору магазина");
         System.out.println("0.Вернуться назад");
         int num = in.nextInt();
         if (num == 1) {
@@ -272,7 +271,7 @@ public class CenterControlService {
         Map<Integer, String> infoShops = shopService.getShopInfoIdAndName();
         infoShops.forEach((key, value) -> stringBuilder.append("Номер -" + key + " . Название: " + value + "\n"));
         stringBuilder.append("Колличество магазинов ").append(shopService.getAll().size());
-        stringBuilder.append("\n Выберите : №  магазина");
+        stringBuilder.append("\n Выберите : N  магазина");
         stringBuilder.append("\n0. Вернуться в меню магазинов ");
         return stringBuilder;
     }
@@ -346,10 +345,10 @@ public class CenterControlService {
 
     private StringBuilder infoShop(int numberShop) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Магазин " + "№").append(numberShop);
+        stringBuilder.append("Магазин " + "N").append(numberShop);
         stringBuilder.append("\n1.Просмотр товаров для заказа или изменения товара");
         stringBuilder.append("\n2.Добавить товар");
-        stringBuilder.append("\n3.Изменение регистрационных данных");
+        stringBuilder.append("\n3.изменение регистрационных данных");
         stringBuilder.append("\n4.Удаление магазина");
         stringBuilder.append("\n0.К просмотру списка магазинов");
         return stringBuilder;
@@ -422,7 +421,7 @@ public class CenterControlService {
         List<Product> productList = shopService.getAllProductShopFindByPriceAndName(numberShop, priceProduct, nameProduct);
         if (productList != null && productList.size() != 0) {
             for (Product product : productList) {
-                System.out.println(" Номер товара " + product.getId() + ", Название: " + product.getName() + ", Цена: " + product.getPrice() + ", Колличество: " + product.getCount() + ", Категории товара: ");
+                System.out.println(" Номер товара: " + product.getId() + ", Название: " + product.getName() + ", Цена: " + product.getPrice() + ", Колличество: " + product.getCount() + ", Категории товара: ");
                 for (Category category : product.getCategorySet()) {
                     System.out.println("" + category.getName());
                 }
@@ -450,7 +449,7 @@ public class CenterControlService {
         List<Product> productList = shopService.getAllProductSortedByPrice(numberShop);
         if (productList != null && productList.size() != 0) {
             for (Product products : productList) {
-                System.out.println(" Номер товара " + products.getId() + ", Название: " + products.getName() + ", Цена: " + products.getPrice() + ", Колличество: " + products.getCount() + ", Категории товара: ");
+                System.out.println(" Номер товара: " + products.getId() + ", Название: " + products.getName() + ", Цена: " + products.getPrice() + ", Колличество: " + products.getCount() + ", Категории товара: ");
                 for (Category category : products.getCategorySet()) {
                     System.out.println("" + category.getName());
                 }
@@ -475,7 +474,7 @@ public class CenterControlService {
     private StringBuilder productBuyEditDelInfo() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("1.Заказать выбраный продукт");
-        stringBuilder.append("\n2.Изменить");
+        stringBuilder.append("\n2.изменить");
         stringBuilder.append("\n3.Удалить");
         stringBuilder.append("\n0.К просмотру списка продуктов выбраного магазина");
         return stringBuilder;
@@ -502,7 +501,6 @@ public class CenterControlService {
                     this.productBuyEditDel(numberShop, numberProduct);
                     break;
             }
-
         }
     }
 
@@ -525,11 +523,14 @@ public class CenterControlService {
         order.setStatusOrder(StatusOrder.PENDING);
         order.setProductList(productList1);
         shopService.addOrder(numberShop, order);
+        if(clientNumber == 0){
+            System.out.println("Номер юзера по умолчанию не выбран, выберите юзера и вернитесь к магазинам:");
+            listUser();
+        }
         clientService.addOrder(order, clientNumber);
         System.out.println("заказ принят");
         productShop(numberShop);
     }
-
 
     private void editShopProduct(int numberShop, int numberProduct) {
         Scanner in = new Scanner(System.in);
@@ -550,13 +551,6 @@ public class CenterControlService {
         System.out.println(" продукт успешно удалён");
         productShop(numberShop);
     }
-//        StringBuilder stringBuilder = new StringBuilder();
-//        Map<Integer, String> infoShops = shopService.getAllShopProducts(numberShop);
-//        infoShops.forEach((key, value) -> stringBuilder.append("Номер -" + key + " . Название: " + value + "\n"));
-//        stringBuilder.append("Колличество магазинов " + shopService.getAll().size());
-//        stringBuilder.append("\n Выберите : №  магазина");
-//        stringBuilder.append("\n0. Вернуться в меню магазинов ");
-//        return stringBuilder;
 
     private void editShop(int numberShop) {
         Scanner in = new Scanner(System.in);
@@ -573,7 +567,7 @@ public class CenterControlService {
 
     private void delShop(int numberShop) {
         shopService.deleteEntity(shopService.getShopById(numberShop));
-        System.out.println("Магазин : №" + numberShop + "удален");
+        System.out.println("Магазин : N" + numberShop + "удален");
         showListShops();
     }
 }

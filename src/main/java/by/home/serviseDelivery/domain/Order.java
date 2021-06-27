@@ -8,7 +8,7 @@ public class Order {
     private int priceOrder;
     private String nameShop;
     private String address;
-    private Date dateOrder ;
+    private Date dateOrder;
     private StatusOrder statusOrder;
     private List<Product> productList;
 

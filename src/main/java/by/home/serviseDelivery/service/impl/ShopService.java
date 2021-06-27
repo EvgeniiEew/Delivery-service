@@ -10,7 +10,6 @@ import by.home.serviseDelivery.service.interfase.FileService;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 public class ShopService implements IShopService {
 
     private final FileService<Shop> fileService;
@@ -32,7 +31,6 @@ public class ShopService implements IShopService {
     private List<Shop> getListShop() {
         return (List<Shop>) fileService.readFile(SHOP, new Shop());
     }
-
 
     @Override
     public Shop save(Shop entity) {
@@ -188,7 +186,11 @@ public class ShopService implements IShopService {
     public List<Product> getAllProductSortedByPrice(Integer shopId) {
         Shop shop = getShopById(shopId);
         List<Product> productList = shop.getProductList();
-        return productList.stream().sorted(Comparator.comparingInt(Product::getPrice)).collect(Collectors.toList());
+        List<Product> sortedListPr = new ArrayList<>();
+        if (productList != null) {
+            sortedListPr = productList.stream().sorted(Comparator.comparingInt(Product::getPrice)).collect(Collectors.toList());
+        }
+        return sortedListPr;
     }
 
     @Override
@@ -196,22 +198,15 @@ public class ShopService implements IShopService {
         Shop shop = getShopById(shopId);
         List<Product> productList = shop.getProductList();
         List<Product> sortedList = new ArrayList<>();
-        for (Product product : productList) {
-            for (Category category1 : product.getCategorySet()) {
-                if (category1.getName().equals(category)) {
-                    sortedList.add(product);
+        if (productList != null) {
+            for (Product product : productList) {
+                for (Category category1 : product.getCategorySet()) {
+                    if (category1.getName().equals(category)) {
+                        sortedList.add(product);
+                    }
                 }
             }
         }
-
-
-//            product.setCategorySet(product.getCategorySet().stream().filter(category1 ->
-//                    category1.getName().contains(category)).collect(Collectors.toSet()));
-//            product.setCategorySet(product.getCategorySet().stream().filter(category1 ->
-//                    category1.getName().equals(category)).collect(Collectors.toSet()));
-//            if (product.getCategorySet() != null) {
-//            sortedList.add(product);
-//                System.out.println("W");
         return sortedList;
     }
 

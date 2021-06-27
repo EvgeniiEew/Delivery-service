@@ -1,6 +1,5 @@
 package by.home.serviseDelivery.service;
 
-import by.home.serviseDelivery.domain.Shop;
 import by.home.serviseDelivery.service.interfase.FileService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -29,9 +28,9 @@ public class JsonFileService<T> implements FileService<T> {
     }
 
     @Override
-    public Collection<T> readFile(String fileName,  T type) {
+    public Collection<T> readFile(String fileName, T type) {
         Gson gson = new Gson();
-        File file = new File("resources/"+ fileName + ".json");
+        File file = new File("resources/" + fileName + ".json");
         String absolutePath = file.getAbsolutePath();
         try {
             String line = Files.lines(Paths.get(absolutePath)).reduce("", String::concat);
